@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ashkar Ali | Videography & Content Creation</title>
+    <link rel="icon" type="image/png" href="fav.png">
+
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css">
@@ -769,9 +771,60 @@
         .tap-for-sound-overlay i {
             margin-bottom: 0.5rem;
         }
+
+        /* Loader Styles */
+        #loader-wrapper {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: var(--color-primary-bg); /* Match body background */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000; /* Ensure it's on top of everything */
+            transition: opacity 0.5s ease-out, visibility 0.5s ease-out;
+            flex-direction: column;
+        }
+
+        #loader-wrapper.hidden {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none; /* Prevent interaction after fade */
+        }
+
+        .loader {
+            border: 8px solid rgba(255, 255, 255, 0.2);
+            border-top: 8px solid var(--color-accent); /* Accent color for spinner */
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        #loader-text {
+            color: var(--color-secondary-text);
+            margin-top: 20px;
+            font-size: 1.2rem;
+        }
+
+        body.no-scroll {
+            overflow: hidden;
+        }
     </style>
 </head>
 <body>
+    <div id="loader-wrapper">
+        <div class="loader"></div>
+        <div id="loader-text">Loading content...</div>
+    </div>
+
     <div class="custom-cursor"></div>
     
     <div class="scroll-indicator"></div>
@@ -822,7 +875,6 @@
 
     <main>
         <section id="home" class="relative text-white min-h-screen">
-            <!-- Background Image with blur -->
             <div class="home-background-image"></div>
             
             <a href="#portfolio" class="home-portfolio-link" data-aos="fade-left" data-aos-duration="800" data-aos-delay="400">
@@ -847,7 +899,6 @@
             </div>
         </section>
 
-        <!-- New Video Showcase Section -->
         <section id="video-showcase" class="parallax-section relative text-white py-20 min-h-screen flex items-center justify-center">
             <div class="parallax-bg" style="background-image: url('./p3.jpg');"></div>
             <div class="container mx-auto px-4 relative z-10 flex flex-col items-center">
@@ -921,7 +972,7 @@
                                 <div class="mobile-notch"></div>
                                 <div class="mobile-content">
                                     <video id="shortVideo" class="w-full h-full object-cover" muted autoplay loop playsinline preload="auto">
-                                        <source src="https://firebasestorage.googleapis.com/v0/b/prefab-setting-329814.appspot.com/o/vid1.mp4?alt=media&token=3579f6d6-36b8-4ac1-bb76-109a2e90c0fe" type="video/mp4">
+                                        <source src="https://firebasestorage.googleapis.com/v0/b/prefab-setting-329814.appspot.com/o/IMG_6464.MOV?alt=media&token=7a57fb71-306f-4d36-a893-64b13b665467" type="video/mp4">
                                         Your browser does not support the video tag.
                                     </video>
                                     <button id="shortVideoUnmuteButton" class="absolute bottom-10 left-1/2 -translate-x-1/2 bg-[var(--color-accent)] text-[var(--color-main-text)] p-2 rounded-full hidden">
@@ -1003,7 +1054,6 @@
             <div class="parallax-bg" style="background-image: url('./p1.jpg');"></div>
             <div class="container mx-auto px-4 relative z-10">
                 <h2 class="text-4xl md:text-5xl font-bold text-center mb-8 gradient-text" data-aos="fade-down" data-aos-duration="800">My Portfolio</h2>
-                <!-- Filter buttons are removed as per request for a simple grid -->
                 <div class="portfolio-grid" id="portfolio-gallery">
                     <div class="portfolio-item" data-aos="zoom-in" data-aos-duration="500">
                         <img src="./IMG_5066.JPG" onerror="this.onerror=null;this.src='https://placehold.co/400x600/333/FFF?text=Image+1';" alt="Portfolio Image 1">
@@ -1025,7 +1075,7 @@
                     </div>
                     <div class="portfolio-item" data-aos="zoom-in" data-aos-duration="500" data-aos-delay="300">
                         <video muted autoplay loop playsinline preload="auto" poster="./IMG_5282.JPG" onerror="this.onerror=null;this.poster='https://placehold.co/400x800/000/FFF?text=Video+2+Poster';">
-                            <source src="https://firebasestorage.googleapis.com/v0/b/prefab-setting-329814.appspot.com/o/V5.MOV?alt=media&token=b4656b0d-12be-4092-99c7-f359b4485306" type="video/mp4">
+                            <source src="https://firebasestorage.googleapis.com/v0/b/prefab-setting-329814.appspot.com/o/V5.MOV?alt=media&token=b4656b0d-12be-4092-99c7-f359b448306" type="video/mp4">
                             Your browser does not support the video tag.
                         </video>
                     </div>
@@ -1150,6 +1200,21 @@
 
     <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
     <script>
+        // Loader Logic - BEFORE DOMContentLoaded
+        const loaderWrapper = document.getElementById('loader-wrapper');
+        const body = document.body;
+
+        // Add 'no-scroll' class to body initially to prevent scrolling
+        body.classList.add('no-scroll');
+
+        window.addEventListener('load', () => {
+            // Once all assets (images, videos, fonts) are loaded
+            setTimeout(() => {
+                loaderWrapper.classList.add('hidden'); // Fade out loader
+                body.classList.remove('no-scroll'); // Re-enable scrolling
+            }, 500); // Small delay for aesthetic fade-out
+        });
+
         // AOS Initialization
         AOS.init({
             once: true, // Animation only happens once
